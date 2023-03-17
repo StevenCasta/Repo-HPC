@@ -1,2 +1,2 @@
-# Remote HPC
+# HPC
 Retos
