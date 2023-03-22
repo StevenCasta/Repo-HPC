@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 	//clock_t end = clock();
 
 	time_spent = (double)(end - begin); // Si se usa clock(), dividir por CLOCKS_PER_SEC
-	printf("CPU time with %d threads = %.7f seconds\n", num_threads, time_spent);
+	printf("CPU time with matrix size %d and %d threads = %.7f seconds\n", n, num_threads, time_spent);
 
 	/*print_matrix(matrixA, n);
 	print_matrix(matrixB, n);

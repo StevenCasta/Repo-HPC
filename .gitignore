@@ -1,4 +1,2 @@
-sequential-matrix
-sequential-matrix-transpose
-threads-matrix
-processes-matrix
+*.out
+*.doc
