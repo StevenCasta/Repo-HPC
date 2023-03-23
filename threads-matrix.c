@@ -79,7 +79,8 @@ int main(int argc, char *argv[])
 {
 	char *ptr;
 	int i, j;
-	double time_spent;
+	struct timespec start, finish;
+	double elapsed;
 
 	n = strtol(argv[1], &ptr, 10);  /* Convierte la entrada de CLI(str) a int */
 	num_threads = strtol(argv[2], &ptr, 10);
@@ -107,16 +108,18 @@ int main(int argc, char *argv[])
 	}
 
 	/* Se toma el tiempo antes y después de las operaciones */
-	time_t begin = time(NULL);
+	clock_gettime(CLOCK_MONOTONIC, &start);
+	//time_t begin = time(NULL);
 	//clock_t begin = clock();
 
 	handle_threads(n);
 
-	time_t end = time(NULL);
+	clock_gettime(CLOCK_MONOTONIC, &finish);
+	//time_t end = time(NULL);
 	//clock_t end = clock();
 
-	time_spent = (double)(end - begin); // Si se usa clock(), dividir por CLOCKS_PER_SEC
-	printf("CPU time with matrix size %d and %d threads = %.7f seconds\n", n, num_threads, time_spent);
+	elapsed = (finish.tv_sec - start.tv_sec) + (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+	printf("CPU time with matrix size %d and %d threads = %.7f seconds\n", n, num_threads, elapsed);
 
 	/*print_matrix(matrixA, n);
 	print_matrix(matrixB, n);

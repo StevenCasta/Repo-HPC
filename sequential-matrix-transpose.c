@@ -31,6 +31,9 @@ int main(int argc, char *argv[])
 	char *ptr;
 	int i, j, n;
 	double time_spent;
+	struct timespec start, finish;
+	double elapsed;
+
 	n = strtol(argv[1], &ptr, 10);  /* Convierte la entrada de CLI(str) a int */
 
 	/* Reserva memoria para las filas de las matrices */
@@ -56,16 +59,18 @@ int main(int argc, char *argv[])
 	}
 
 	/* Se toma el tiempo antes y después de las operaciones */
-	time_t begin = time(NULL);
+	clock_gettime(CLOCK_MONOTONIC, &start);
+	//time_t begin = time(NULL);
 	//clock_t begin = clock();
 
 	calculate_multiplication(n);
 
-	time_t end = time(NULL);
+	clock_gettime(CLOCK_MONOTONIC, &finish);
+	//time_t end = time(NULL);
 	//clock_t end = clock();
 
-	time_spent = (double)(end - begin); // Si se usa clock(), dividir por CLOCKS_PER_SEC
-	printf("CPU time with matrix size %d = %.7f seconds\n", n, time_spent);
+	elapsed = (finish.tv_sec - start.tv_sec) + (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+	printf("CPU time with matrix size %d = %.7f seconds\n", n, elapsed);
 
 	/*print_matrix(matrixA, n);
 	print_matrix(matrixB, n);

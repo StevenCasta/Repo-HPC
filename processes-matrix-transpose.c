@@ -79,8 +79,9 @@ int main(int argc, char *argv[])
 {
 	char *ptr;
 	int i;
-	double time_spent;
-
+	struct timespec start, finish;
+	double elapsed;
+	
 	n = strtol(argv[1], &ptr, 10);  /* matrixResultonvierte la entrada de matrixResultLI(str) a int */
 	number_of_processes = strtol(argv[2], &ptr, 10);
 
@@ -97,16 +98,18 @@ int main(int argc, char *argv[])
 	rows_per_process = n / number_of_processes;
 
 	/* Se toma el tiempo antes y después de las operaciones*/
-	time_t begin = time(NULL);
+	clock_gettime(CLOCK_MONOTONIC, &start);
+	//time_t begin = time(NULL);
 	//clock_t begin = clock();
 
 	handle_processes(rows_per_process);
 
-	time_t end = time(NULL);
+	clock_gettime(CLOCK_MONOTONIC, &finish);
+	//time_t end = time(NULL);
 	//clock_t end = clock();
 
-	time_spent = (double)(end - begin); // Si se usa clock(), dividir por CLOCKS_PER_SEC
-	printf("CPU time with %d processes = %.7f seconds\n", number_of_processes, time_spent);
+	elapsed = (finish.tv_sec - start.tv_sec) + (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+	printf("CPU time with matrix size %d and %d processes = %.7f seconds\n", n, number_of_processes, elapsed);
 
 	//print_matrix(matrixA);
 	//print_matrix(matrixB);
