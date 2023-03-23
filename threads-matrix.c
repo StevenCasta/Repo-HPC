@@ -39,7 +39,7 @@ void handle_threads(int n)
 		temp_num_threads = n;
 		row_threads = 1;
 	} else 
-		(n / temp_num_threads) + ((n % temp_num_threads) != 0); /* ceil */
+		row_threads = (n / temp_num_threads) + ((n % temp_num_threads) != 0); /* ceil */
 
 	pthread_t threads[temp_num_threads];
 	pthread_attr_t attr;
