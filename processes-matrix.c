@@ -116,9 +116,9 @@ int main(int argc, char *argv[])
 	print_matrix(matrixResult);*/
 
 	/* Libera memoria de las matrices */
-	munmap(matrixA, (n *n * sizeof(int *)));
-	munmap(matrixB, (n *n * sizeof(int *)));
-	munmap(matrixResult, (n *n * sizeof(int *)));
+	munmap(matrixA, ((n * n) * sizeof(int *)));
+	munmap(matrixB, ((n * n) * sizeof(int *)));
+	munmap(matrixResult, ((n * n) * sizeof(int *)));
 
 	return 0;
 }
