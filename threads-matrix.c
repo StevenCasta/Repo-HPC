@@ -7,20 +7,20 @@
 int **matrixA, **matrixB, **matrixResult;
 int n, row_threads, temp_num_threads, num_threads;
 
-void *calculate_matrixResultiplication(void *t)
+void *calculate_matrix_multiplication(void *t)
 {
 	int c = (long)t;
-	int start = row_threads * c;
+	int begin = row_threads * c;
 	int i, j, a, end;
 
 	if (c < temp_num_threads - 1) {
-		end = start + row_threads;
+		end = begin + row_threads;
 	} else {
 		end = n;
 	}
 
 	for (a = 0; a < n; a++) {
-		for (i = start; i < end; i++) {
+		for (i = begin; i < end; i++) {
 			for (j = 0; j < n; j++)
 				matrixResult[a][i] += matrixA[a][j] * matrixB[j][i];
 		}
@@ -38,8 +38,9 @@ void handle_threads(int n)
 	if (n <= temp_num_threads) {
 		temp_num_threads = n;
 		row_threads = 1;
-	} else 
+	} else {
 		row_threads = (n / temp_num_threads) + ((n % temp_num_threads) != 0); /* ceil */
+	}
 
 	pthread_t threads[temp_num_threads];
 	pthread_attr_t attr;
@@ -47,7 +48,7 @@ void handle_threads(int n)
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
 	for (t = 0; t < temp_num_threads; t++) {
-		rc = pthread_create(&threads[t], &attr, calculate_matrixResultiplication, (void *)t);
+		rc = pthread_create(&threads[t], &attr, calculate_matrix_multiplication, (void *)t);
 		if (rc) {
 			printf("ERROR; return code form pthread_create() is %d\n", rc);
 			exit(-1);
