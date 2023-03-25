@@ -1,0 +1,10 @@
+icc -DUSE_CLOCK -O3 jacobi1d.c timing.c -o jacobi1d
+
+VERSIONES SIN WARNING:
+sequential : gcc -DUSE_CLOCK -O3 jacobi1d.c timing.c -o jacobi1d.out
+threads : gcc -DUSE_CLOCK -O3 threads-jacobi1d.c timing.c -o threads-jacobi1d.out
+
+sequential : gcc jacobi1d.c timing.c -o jacobi1d.out
+threads : gcc threads-jacobi1d.c timing.c -o threads-jacobi1d.out
+
+100000000
