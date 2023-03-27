@@ -19,27 +19,6 @@ void *reserve_shared_memory(size_t n)
 	return mmap(NULL, n, protection, visibility, -1, 0);
 }
 
-/* Llena la matriz con números random */
-void initialize_matrix(int *matrix)
-{
-	int i, j;
-	for (i = 0; i < n; i++) {
-		for (j = 0; j < n; j++)
-			*(matrix + i * n + j) = rand() % 13;
-	}
-}
-
-void print_matrix(int *matrix)
-{
-	int i, j;
-	for (i = 0; i < n; i++) {
-		printf("\n");
-		for (j = 0; j < n; j++)
-			printf("\t%d ", *(matrix + i * n + j));
-	}
-	printf("\n");
-}
-
 void calculate_multiplication(int begin_index, int end_index)
 {
 	int i, sweep;
@@ -47,6 +26,7 @@ void calculate_multiplication(int begin_index, int end_index)
 	double h2 = h * h;
 
 	double *utmp = reserve_shared_memory((n + 1) * sizeof(double *));
+
 	/* Fill boundary conditions into utmp */
 	utmp[0] = u[0];
 	utmp[n] = u[n];
@@ -91,21 +71,32 @@ void handle_processes(int number_of_rows)
 	}
 }
 
+void write_solution(int n, double *u, const char *fname)
+{
+	int i;
+	double h = 1.0 / n;
+	FILE* fp = fopen(fname, "w+");
+	for (i = 0; i <= n; ++i)
+		fprintf(fp, "%g %g\n", i*h, u[i]);
+	fclose(fp);
+}
+
 int main(int argc, char *argv[])
 {
 	int i;
 	double h;
-	char *ptr;
+	char *ptr, *fname;
 	timing_t tstart, tend;
 
 	/* Process arguments */
 	n = strtol(argv[1], &ptr, 10); /* Convierte la entrada de CLI(str) a int */
 	nsweeps = strtol(argv[2], &ptr, 10);
 	number_of_processes = strtol(argv[3], &ptr, 10);
+	fname  = (argc > 4) ? argv[4] : NULL;
 
 	h = 1.0 / n;
 
-	/* Reserva memoria para las matrices */
+	/* Allocate memory and initialize arrays */
 	u = reserve_shared_memory((n + 1) * sizeof(double *));
 	f = reserve_shared_memory((n + 1) * sizeof(double *));
 	memset(u, 0, (n + 1) * sizeof(double));
@@ -119,10 +110,14 @@ int main(int argc, char *argv[])
 	handle_processes(rows_per_process);
 	get_time(&tend);
 
-	printf("CPU time with n %d, nsteps %d and %d processes = %Lg seconds\n", 
+	printf("CPU time with n %d, nsteps %d and %d processes = %.7Lf seconds\n", 
 		n, nsweeps, number_of_processes, timespec_diff(tstart, tend));
 
-	/* Libera memoria de las matrices */
+	/* Write the results */
+	if (fname)
+		write_solution(n, u, fname);
+
+	/* Libera memoria */
 	munmap(u, ((n + 1) * sizeof(double *)));
 	munmap(f, ((n + 1) * sizeof(double *)));
 

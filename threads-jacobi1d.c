@@ -79,17 +79,28 @@ void handle_threads(int n)
 	}
 }
 
+void write_solution(int n, double *u, const char *fname)
+{
+	int i;
+	double h = 1.0 / n;
+	FILE* fp = fopen(fname, "w+");
+	for (i = 0; i <= n; ++i)
+		fprintf(fp, "%g %g\n", i*h, u[i]);
+	fclose(fp);
+}
+
 int main(int argc, char *argv[])
 {
 	int i;
 	double h;
-	char *ptr;
+	char *ptr, *fname;
 	timing_t tstart, tend;
 
 	/* Process arguments */
 	n = strtol(argv[1], &ptr, 10); /* Convierte la entrada de CLI(str) a int */
 	nsweeps = strtol(argv[2], &ptr, 10);
 	num_threads = strtol(argv[3], &ptr, 10);
+	fname  = (argc > 4) ? argv[4] : NULL;
 
 	h = 1.0 / n;
 
@@ -100,15 +111,19 @@ int main(int argc, char *argv[])
 	for (i = 0; i <= n; ++i)
 		f[i] = i * h;
 
-	/* Run the solver */
+	/* Se toma el tiempo antes y después de las operaciones */
 	get_time(&tstart);
 	handle_threads(n);
 	get_time(&tend);
 
-	/* Run the solver */
-	printf("CPU time with n %d, nsteps %d and %d threads = %Lg seconds\n", 
+	printf("CPU time with n %d, nsteps %d and %d threads = %Lf seconds\n", 
 		n, nsweeps, num_threads, timespec_diff(tstart, tend));
 
+	/* Write the results */
+	if (fname)
+		write_solution(n, u, fname);
+
+	/* Libera memoria */
 	free(f);
 	free(u);
 

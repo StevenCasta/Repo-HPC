@@ -27,16 +27,27 @@ void jacobi(int nsweeps, int n, double *u, double *f)
 	free(utmp);
 }
 
+void write_solution(int n, double *u, const char *fname)
+{
+	int i;
+	double h = 1.0 / n;
+	FILE* fp = fopen(fname, "w+");
+	for (i = 0; i <= n; ++i)
+		fprintf(fp, "%g %g\n", i*h, u[i]);
+	fclose(fp);
+}
+
 int main(int argc, char *argv[])
 {
 	int i, n, nsteps;
 	double *u, *f, h;
-	char *ptr;
+	char *ptr, *fname;
 	timing_t tstart, tend;
 
 	/* Process arguments */
 	n = strtol(argv[1], &ptr, 10); /* Convierte la entrada de CLI(str) a int */
 	nsteps = strtol(argv[2], &ptr, 10);
+	fname  = (argc > 3) ? argv[3] : NULL;
 
 	h = 1.0 / n;
 
@@ -53,9 +64,13 @@ int main(int argc, char *argv[])
 	get_time(&tend);
 
 	/* Run the solver */
-	printf("CPU time with n %d, nsteps %d = %Lg seconds\n", 
+	printf("CPU time with n %d, nsteps %d = %Lf seconds\n", 
 		n, nsteps, timespec_diff(tstart, tend));
 
+	if (fname)
+		write_solution(n, u, fname);
+
+	/* Libera memoria */
 	free(f);
 	free(u);
 
