@@ -1,12 +1,12 @@
 #! /bin/bash
 for j in {1..10}
 do
-for a in 2 4 8 16
+for a in 10000000
 do
-for i in 4000 4500
+for i in 500 1000 1500 2000 2500 3000 3500 4000
 do
-./threads-matrix.out $i $a >> times2-threads-matrix.doc
-./processes-matrix.out $i $a >> times2-processes-matrix.doc
+./sequential-jacobi1d-O3.out $a $i >> times-sequential-jacobi1d-O3.doc
 done
 done
 done
+
