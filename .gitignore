@@ -1,2 +1,5 @@
 *.out
 *.doc
+processes-matrix-transpose.c
+sequential-jacobi1d-cache.c
+threads-matrix-transpose.c
